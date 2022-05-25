@@ -18,6 +18,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.raywenderlich.android.todo.Destinations
+import com.raywenderlich.android.todo.NavigationParameters
 import com.raywenderlich.android.todo.R
 import com.raywenderlich.android.todo.data.model.TodoItem
 import com.raywenderlich.android.todo.ui.theme.Typography
@@ -34,7 +36,7 @@ fun TodoListComposable(todoListViewModel: TodoListViewModel, navController: NavC
         modifier = Modifier
             .align(Alignment.BottomEnd)
             .padding(16.dp),
-        onClick = { navController.navigate("editor") }) {
+        onClick = { navController.navigate(Destinations.EDITOR_ROUTE) }) {
       Icon(
           painterResource(id = R.drawable.ic_baseline_add_24),
           contentDescription = null,
@@ -43,6 +45,7 @@ fun TodoListComposable(todoListViewModel: TodoListViewModel, navController: NavC
   }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TodoList(
     items: List<TodoItem>,
@@ -58,69 +61,76 @@ fun TodoList(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun TodoListItem(item: TodoItem, todoListViewModel: TodoListViewModel,
-    navController: NavController) {
-  val swipeableState = rememberSwipeableState(0)
-  val sizePx = with(LocalDensity.current) { 30.dp.toPx() }
-  val anchors = mapOf(0f to 0, sizePx to 1) // Maps anchor points (in px) to states
-
-  Box(
-      modifier = Modifier
-          .fillMaxWidth()
-          .swipeable(
-              state = swipeableState,
-              anchors = anchors,
-              thresholds = { _, _ -> FractionalThreshold(0.5f) },
-              orientation = Orientation.Horizontal
-          )
-  ) {
-    IconButton(onClick = {
+fun TodoListItem(
+    item: TodoItem,
+    todoListViewModel: TodoListViewModel,
+    navController: NavController
+) {
+  val dismissState = rememberDismissState(confirmStateChange = {
+    if (it == DismissValue.DismissedToEnd) {
       todoListViewModel.removeTodo(item)
-    },
-        modifier = Modifier
-            .size(30.dp)
-            .align(Alignment.CenterStart)) {
-      Icon(
-          painterResource(id = R.drawable.ic_baseline_delete_outline_24),
-          modifier = Modifier
-              .size(30.dp)
-              .align(Alignment.CenterStart),
-          contentDescription = null,
-          tint = Color.Red
-      )
     }
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
-            .pointerInput(Unit) {
-              detectTapGestures(
-                  onTap = { navController.navigate("editor?item=${item.id}") },
-                  onDoubleTap = { todoListViewModel.toggleStarred(item) })
+    true
+  })
+
+  SwipeToDismiss(
+      state = dismissState,
+      dismissThresholds = { FractionalThreshold(0.5f) },
+      background = {
+        Icon(
+            painterResource(id = R.drawable.ic_baseline_delete_outline_24),
+            modifier = Modifier
+                .size(30.dp)
+                .align(Alignment.CenterVertically),
+            contentDescription = null,
+            tint = Color.Red
+        )
+      },
+      dismissContent = {
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+          Row(
+              Modifier
+                  .fillMaxWidth()
+                  .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = {
+                          navController.navigate("${
+                            Destinations.EDITOR_ROUTE
+                          }?${NavigationParameters.EDITOR_ITEM_KEY}=${
+                            item
+                                .id
+                          }")
+                        },
+                        onDoubleTap = { todoListViewModel.toggleStarred(item) })
+                  }
+                  .background(Color.White)
+                  .padding(8.dp),
+              verticalAlignment = Alignment.CenterVertically,
+              horizontalArrangement = Arrangement.SpaceBetween,
+          ) {
+            Column(Modifier.fillMaxWidth(.8f)) {
+              Text(
+                  text = item.title,
+                  style = Typography.h6,
+                  maxLines = 1,
+                  overflow = TextOverflow.Ellipsis
+              )
+              Text(
+                  text = item.content,
+                  style = Typography.body1,
+                  maxLines = 2,
+                  overflow = TextOverflow.Ellipsis
+              )
             }
-            .background(Color.White)
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-      Column(Modifier.fillMaxWidth(.8f)) {
-        Text(
-            text = item.title,
-            style = Typography.h6,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        Text(
-            text = item.content,
-            style = Typography.body1,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
-      }
-      if (item.starred) {
-        Text(text = "⭐", modifier = Modifier.wrapContentWidth())
-      }
-    }
-    Divider()
-  }
+            if (item.starred) {
+              Text(text = "⭐", modifier = Modifier.wrapContentWidth())
+            }
+          }
+          Divider()
+        }
+      },
+      directions = setOf(DismissDirection.StartToEnd),
+  )
 }

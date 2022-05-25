@@ -24,14 +24,16 @@ class MainActivity : ComponentActivity() {
       TodoTheme {
         val navController = rememberNavController()
 
-        NavHost(navController = navController, startDestination = "list") {
-          composable("list") {
+        NavHost(navController = navController, startDestination = Destinations.LIST_ROUTE) {
+          composable(Destinations.LIST_ROUTE) {
             val todoListViewModel: TodoListViewModel by viewModels()
             TodoListComposable(todoListViewModel, navController)
           }
           composable(
-              "editor?item={item}",
-              arguments = listOf(navArgument("item") {
+              "${Destinations.EDITOR_ROUTE}?${NavigationParameters.EDITOR_ITEM_KEY}={${
+                NavigationParameters.EDITOR_ITEM_KEY
+              }}",
+              arguments = listOf(navArgument(NavigationParameters.EDITOR_ITEM_KEY) {
                 type = NavType.IntType
                 defaultValue = -1
               })
@@ -40,7 +42,7 @@ class MainActivity : ComponentActivity() {
             TodoEditorComposable(
                 todoEditorViewModel,
                 navController,
-                backStackEntry.arguments?.getInt("item")
+                backStackEntry.arguments?.getInt(NavigationParameters.EDITOR_ITEM_KEY)
             )
           }
         }
