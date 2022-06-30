@@ -67,7 +67,7 @@ fun TodoListComposable(todoListViewModel: TodoListViewModel, navController: NavC
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),
             onClick = {
-                // TODO Add click event
+                // TODO: Add click event
             }) {
             Icon(
                 painterResource(id = R.drawable.ic_baseline_add_24),
@@ -83,7 +83,7 @@ fun TodoList(
     todoListViewModel: TodoListViewModel,
     navController: NavController
 ) {
-    // TODO change to LazyColumn
+    // TODO: Change to LazyColumn
     Column(modifier = Modifier.padding(16.dp), content = {
         items.forEach {
             TodoListItem(it, todoListViewModel, navController)
@@ -97,16 +97,16 @@ fun TodoListItem(
     todoListViewModel: TodoListViewModel,
     navController: NavController
 ) {
-    // TODO add remember state
+    // TODO: Add swipe to dismiss state
 
-    // TODO wrap with swipe to dismiss
+    // TODO: Wrap with swipe to dismiss
     Box(
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             Modifier
-                // TODO add double click listener
-                // TODO Add click event
+                // TODO: Add clickable modifier
+                // TODO: Add pointer input modifier
                 .fillMaxWidth()
                 .background(Color.White)
                 .padding(8.dp),

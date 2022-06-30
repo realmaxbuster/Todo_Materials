@@ -55,7 +55,7 @@ fun TodoEditorComposable(
 
     Column(
         Modifier
-            // TODO add vertical scroll
+            // TODO: Add vertical scroll
             .fillMaxHeight()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -74,7 +74,7 @@ fun TodoEditorComposable(
             .fillMaxWidth()
             .height(50.dp),
             onClick = {
-                // TODO Add click event
+                // TODO: Add click event
             }
         ) {
             Text(text = stringResource(id = R.string.save))
