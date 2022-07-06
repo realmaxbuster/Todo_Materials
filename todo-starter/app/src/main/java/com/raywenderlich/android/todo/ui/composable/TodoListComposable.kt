@@ -31,30 +31,22 @@
 package com.raywenderlich.android.todo.ui.composable
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.raywenderlich.android.todo.Destinations
-import com.raywenderlich.android.todo.NavigationParameters
 import com.raywenderlich.android.todo.R
 import com.raywenderlich.android.todo.data.model.TodoItem
 import com.raywenderlich.android.todo.ui.theme.Typography
 import com.raywenderlich.android.todo.viewmodel.TodoListViewModel
-import kotlin.math.roundToInt
 
 @Composable
 fun TodoListComposable(todoListViewModel: TodoListViewModel, navController: NavController) {
@@ -101,6 +93,15 @@ fun TodoListItem(
     // TODO: Add swipe to dismiss state
 
     // TODO: Wrap with swipe to dismiss
+    TodoListRowContent(item, todoListViewModel, navController)
+}
+
+@Composable
+fun TodoListRowContent(
+    item: TodoItem,
+    todoListViewModel: TodoListViewModel,
+    navController: NavController
+) {
     Box(
         modifier = Modifier.fillMaxWidth()
     ) {
